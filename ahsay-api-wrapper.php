@@ -43,7 +43,7 @@ class AhsayApiWrapper
     */
 
     // Constructor
-    public function AhsayApiFunctions($server, $port, $username, $password)
+    public function AhsayApiWrapper($server, $port, $username, $password)
     {
         $this->serverName = $server;
         $this->serverPort = $port;
