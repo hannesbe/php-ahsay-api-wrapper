@@ -5,11 +5,7 @@
 
 PHP API wrapper for AhsayOBS
 
-> Some API calls are known to be missing.  You are welcome to write the code
-> for these functions yourself and submit the necessary code to me for
-> inclusion in future releases of this library.
-
-Example usage;
+## Example usage
 
 ```php
 require 'ahsay-api-wrapper/ahsay-api-wrapper.php';
@@ -34,3 +30,9 @@ printf('BackupJobStatus: '.$lastJobDetailArray['BackupJobStatus']."\n");
 printf('EndTime: '.$lastJobDetailArray['EndTime']);
 
 ```
+## Known issues / limitations
+Some API calls are known to be missing.  You are welcome to write the code for these functions yourself and submit the necessary code to me for inclusion in future releases of this library.
+
+## License
+
+php-ahsay-api-wrapper is licensed under the GNU GENERAL PUBLIC LICENSE - see the [LICENSE](LICENSE) file for more details.
