@@ -7,6 +7,7 @@ PHP API wrapper for AhsayOBS
 
 ## Example usage
 
+[ahsay-api-wrapper-example.php](ahsay-api-wrapper-example.php)
 ```php
 require 'ahsay-api-wrapper/ahsay-api-wrapper.php';
 
