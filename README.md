@@ -1,4 +1,8 @@
 # php-ahsay-api-wrapper
+[![GitHub license](https://img.shields.io/github/license/hannesbe/php-ahsay-api-wrapper.svg)](https://raw.githubusercontent.com/hannesbe/php-ahsay-api-wrapper/master/LICENSE)
+
+[![GitHub release](https://img.shields.io/github/release/hannesbe/php-ahsay-api-wrapper.svg)](https://github.com/hannesbe/php-ahsay-api-wrapper/releases) [![GitHub commits](https://img.shields.io/github/commits-since/hannesbe/php-ahsay-api-wrapper/1.1.svg)](https://github.com/hannesbe/php-ahsay-api-wrapper/commits/1.1)
+
 PHP API wrapper for AhsayOBS
 
 > Some API calls are known to be missing.  You are welcome to write the code
