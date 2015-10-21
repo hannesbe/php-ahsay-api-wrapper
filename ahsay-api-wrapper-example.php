@@ -2,12 +2,11 @@
 
 require 'ahsay-api-wrapper.php';
 
-define('BACKUPSERVER_ADDRESS', 'ahsay.server.com');
-define('BACKUPSERVER_PORT', '80');
+define('BACKUPSERVER_ADDRESS', 'http://ahsay.server.com');
 define('BACKUPSERVER_ADMINUSER', 'adminuser');
 define('BACKUPSERVER_ADMINPASSWORD', 'password');
 
-$api = new AhsayApiWrapper(BACKUPSERVER_ADDRESS, BACKUPSERVER_PORT, BACKUPSERVER_ADMINUSER, BACKUPSERVER_ADMINPASSWORD);
+$api = new AhsayApiWrapper(BACKUPSERVER_ADDRESS, BACKUPSERVER_ADMINUSER, BACKUPSERVER_ADMINPASSWORD);
 
 $api->debug(true);
 

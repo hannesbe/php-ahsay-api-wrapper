@@ -11,12 +11,11 @@ PHP API wrapper for AhsayOBS
 ```php
 require 'ahsay-api-wrapper/ahsay-api-wrapper.php';
 
-define('BACKUPSERVER_ADDRESS', 'ahsay.server.com');
-define('BACKUPSERVER_PORT', '80');
+define('BACKUPSERVER_ADDRESS', 'http://ahsay.server.com');
 define('BACKUPSERVER_ADMINUSER', 'adminuser');
 define('BACKUPSERVER_ADMINPASSWORD', 'password');
 
-$api = new AhsayApiWrapper(BACKUPSERVER_ADDRESS, BACKUPSERVER_PORT, BACKUPSERVER_ADMINUSER, BACKUPSERVER_ADMINPASSWORD);
+$api = new AhsayApiWrapper(BACKUPSERVER_ADDRESS, BACKUPSERVER_ADMINUSER, BACKUPSERVER_ADMINPASSWORD);
 
 $api->debug(true);
 
@@ -35,5 +34,6 @@ printf('EndTime: '.$lastJobDetailArray['EndTime']);
 Some API calls are known to be missing.  You are welcome to write the code for these functions yourself and submit the necessary code to me for inclusion in future releases of this library.
 
 ## License
+[![GitHub license](https://img.shields.io/github/license/hannesbe/check_ahsay_backupset.svg)](https://raw.githubusercontent.com/hannesbe/php-ahsay-api-wrapper/master/LICENSE)
 
-php-ahsay-api-wrapper is licensed under the GNU GENERAL PUBLIC LICENSE - see the [LICENSE](LICENSE) file for more details.
+See the [LICENSE](LICENSE) file for more details.
