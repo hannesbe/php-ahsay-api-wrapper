@@ -106,7 +106,7 @@ class AhsayApiWrapper
         $result = $this->__runQuery($url);
 
         // If that didn't happen
-        if (substr($result, 0, 4) == 'Err:') {
+        if (substr($result, 1, 3) == 'err') {
             $this->debuglog("Doing getUsers() failed $result");
             $this->error = $result;
 
@@ -125,7 +125,7 @@ class AhsayApiWrapper
         $result = $this->__runQuery($url);
 
         // If that didn't happen
-        if (substr($result, 0, 4) == 'Err:') {
+        if (substr($result, 1, 3) == 'err') {
             $this->debuglog("Problem during getUserBackupSets() for '$username'");
             $this->error = $result;
 
