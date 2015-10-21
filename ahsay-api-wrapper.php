@@ -27,7 +27,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 class AhsayApiWrapper
 {
     public $serverAddress;
-    public $serverPort;
     public $serverAdminUsername;
     public $serverAdminPassword;
     public $debug;
@@ -35,18 +34,16 @@ class AhsayApiWrapper
 
     /*
     Note:
-    All times (user added, backupset last run, completed etc) are in the form of Unix timestamps.  In the case
-    of Java this is the
-    number of milliseconds since Jan 1st 1970; though PHP counts this as seconds since Jan 1st 1970.  The
-    solution is to disregard
-    the final 3 digits of the value output by OBS
+    All times (user added, backupset last run, completed etc) are in the form
+    of Unix timestamps.  In the case of Java this is the number of milliseconds
+    since Jan 1st 1970; though PHP counts this as seconds since Jan 1st 1970.
+    The solution is to disregard the final 3 digits of the value output by OBS
     */
 
     // Constructor
-    public function AhsayApiWrapper($server, $port, $username, $password)
+    public function AhsayApiWrapper($address, $username, $password)
     {
-        $this->serverAddress = $server;
-        $this->serverPort = $port;
+        $this->serverAddress = rtrim($address, '/'); // Remove trailing slash
         $this->serverAdminUsername = $username;
         $this->serverAdminPassword = $password;
         $this->debug;
@@ -293,7 +290,7 @@ class AhsayApiWrapper
     // Run an API query against OBS
     public function __runQuery($url)
     {
-        $url = 'http://'.$this->serverAddress.':'.$this->serverPort.$url;
+        $url = $this->serverAddress.$url;
         // If this URL already has a query string
         if (strstr($url, '?')) {
             $url .= '&SysUser='.$this->serverAdminUsername.'&SysPwd='.$this->serverAdminPassword;
