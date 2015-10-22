@@ -66,10 +66,7 @@ class AhsayApiWrapper
 
         // If that didn't happen
         if (substr($result, 0, 3) == 'err') {
-            $this->debuglog("Authenticate user failed $result");
-            $this->error = $result;
-
-            return false;
+            throw new Exception("Authenticate user failed. $result");
         } else {
             return 'OK';
         }
@@ -85,12 +82,9 @@ class AhsayApiWrapper
 
         // If that didn't happen
         if (substr($result, 0, 3) == 'err') {
-            $this->debuglog("No user details found for '$username'");
-            $this->error = $result;
-
-            return false;
+            throw new Exception("No user details found for '$username'. $result");
         } else {
-            return $this->xmlToArray($result);
+            return simplexml_load_string($result);
         }
     }
 
@@ -104,12 +98,9 @@ class AhsayApiWrapper
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
-            $this->debuglog("Doing getUsers() failed $result");
-            $this->error = $result;
-
-            return false;
+            throw new Exception("Problem during getUsers(). $result");
         } else {
-            return $this->xmlToArray($result);
+            return simplexml_load_string($result);
         }
     }
 
@@ -123,12 +114,9 @@ class AhsayApiWrapper
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
-            $this->debuglog("Problem during getUserBackupSets() for '$username'");
-            $this->error = $result;
-
-            return false;
+            throw new Exception("Problem during getUserBackupSets() for '$username'. $result");
         } else {
-            return $this->xmlToArray($result);
+            return simplexml_load_string($result);
         }
     }
 
@@ -143,12 +131,9 @@ class AhsayApiWrapper
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
-            $this->debuglog("Problem during getUserStorageStats() for '$username'");
-            $this->error = $result;
-
-            return false;
+            throw new Exception("Problem during getUserStorageStats() for '$username'. $result");
         } else {
-            return $this->xmlToArray($result);
+            return simplexml_load_string($result);
         }
     }
 
@@ -162,12 +147,9 @@ class AhsayApiWrapper
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
-            $this->debuglog("Problem during getUserBackupJobs() for '$username'");
-            $this->error = $result;
-
-            return false;
+            throw new Exception("Problem during getUserBackupJobs() for '$username'. $result");
         } else {
-            return $this->xmlToArray($result);
+            return simplexml_load_string($result);
         }
     }
 
@@ -181,24 +163,20 @@ class AhsayApiWrapper
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
-            $this->debuglog("Problem during getBackupJobsForSet() for '$username', for backup set with id '$backupset'");
-            $this->error = $result;
-
-            return false;
+            throw new Exception("Problem during getBackupJobsForSet() for '$username', for backup set with id '$backupset'. $result");
         } else {
-            $data = $this->xmlToArray($result);
+            $data = simplexml_load_string($result);
 
-            foreach ($data['BackupSet'] as $set) {
+            foreach ($data->BackupSet as $set) {
                 // If this is the backupset we are interested in
-                if ($set['@attributes']['ID'] == $backupset) {
+                if ($set['ID'] == $backupset) {
+                    $this->debuglog(sizeof($set)." job(s) found for set '$backupset'");
+
                     return $set;
                 }
             }
-
             // If we get to here then that backup set obviously doesn't exist!
-            $this->debuglog("Problem doing getBackupJobsForSet() - looks like set '$backupset' doesn't exist");
-
-            return false;
+            throw new Exception("Problem doing getBackupJobsForSet() - looks like set '$backupset' doesn't exist");
         }
     }
 
@@ -211,15 +189,14 @@ class AhsayApiWrapper
 
         // Get a list of all backup jobs for this backup set
         $jobs = $this->getBackupJobsForSet($username, $backupset);
-        if ($jobs == false) {
-            $this->debuglog("Could not run getUserBackupJobsForSet() in getBackupSetJobIds() for backup set id '$backupset'");
 
-            return false;
+        if (sizeof($jobs) <= 0) {
+            throw new Exception("Could not run getUserBackupJobsForSet() in getBackupSetJobIds() for backup set id '$backupset'. $result");
         }
 
         // Go through each job id
-        foreach ($jobs['BackupJob'] as $job) {
-            $backup_jobs[] = $job['@attributes']['ID'];
+        foreach ($jobs->BackupJob as $job) {
+            $backup_jobs[] = (string) $job['ID'];
         }
 
         // Sort in reverse?
@@ -240,9 +217,7 @@ class AhsayApiWrapper
         // Get a list of all backup jobs for this backup set (in reverse order)
         $jobs = $this->getBackupSetJobIds($username, $backupset, true);
         if ($jobs == false) {
-            $this->debuglog("Could not run getBackupSetJobIds() in getMostRecentBackupJob() for backup set id '$backupset'");
-
-            return false;
+            throw new Exception("Could not run getBackupSetJobIds() in getMostRecentBackupJob() for backup set id '$backupset'. $result");
         }
 
         // Return just the most recent
@@ -259,12 +234,9 @@ class AhsayApiWrapper
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
-            $this->debuglog("Problem during getUserBackupJobDetails() for '$username', job id '$backupjob'");
-            $this->error = $result;
-
-            return false;
+            throw new Exception("Problem during getUserBackupJobDetails() for '$username', job id '$backupjob'. $result");
         } else {
-            return $this->xmlToArray($result);
+            return simplexml_load_string($result);
         }
     }
 
@@ -278,12 +250,9 @@ class AhsayApiWrapper
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
-            $this->debuglog("Problem during getUserBackupSet() for $username");
-            $this->error = $result;
-
-            return false;
+            throw new Exception("Problem during getUserBackupSet() for $username. $result");
         } else {
-            return $this->xmlToArray($result);
+            return simplexml_load_string($result);
         }
     }
 
@@ -316,15 +285,6 @@ class AhsayApiWrapper
         // $bytes /= (1 << (10 * $pow));
 
         return round($bytes, $precision).' '.$units[$pow];
-    }
-
-    private function xmlToArray($xmlString)
-    {
-        $xml = simplexml_load_string($xmlString);
-        $json = json_encode($xml);
-        $array = json_decode($json, true);
-
-        return $array;
     }
 
     // Debug logging
