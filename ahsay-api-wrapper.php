@@ -1,5 +1,4 @@
 <?php
-
 /*
 
 PHP API wrapper for AhsayOBS. Version 1.10
@@ -24,7 +23,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 */
-class AhsayApiWrapper
+class AsayApiWrapper
 {
     public $serverAddress;
     public $serverAdminUsername;
@@ -41,7 +40,7 @@ class AhsayApiWrapper
     */
 
     // Constructor
-    public function AhsayApiWrapper($address, $username, $password)
+    public function __construct($address, $username, $password)
     {
         $this->serverAddress = rtrim($address, '/'); // Remove trailing slash
         $this->serverAdminUsername = $username;
@@ -62,14 +61,13 @@ class AhsayApiWrapper
 
         $url = '/obs/api/AuthUser.do?';
         $url .= 'LoginName='.$username.'&Password='.$password;
-        $result = $this->__runQuery($url);
+        $result = $this->runQuery($url);
 
         // If that didn't happen
         if (substr($result, 0, 3) == 'err') {
             throw new Exception("Authenticate user failed. $result");
-        } else {
-            return 'OK';
         }
+        return 'OK';
     }
 
     // Get a particular user
@@ -78,14 +76,14 @@ class AhsayApiWrapper
         $this->debuglog("Getting user '$username'");
 
         $url = "/obs/api/GetUser.do?LoginName=$username";
-        $result = $this->__runQuery($url);
+        $result = $this->runQuery($url);
 
         // If that didn't happen
         if (substr($result, 0, 3) == 'err') {
             throw new Exception("No user details found for '$username'. $result");
-        } else {
-            return simplexml_load_string($result);
         }
+
+        return simplexml_load_string($result);
     }
 
     // Get an array of all users
@@ -94,14 +92,13 @@ class AhsayApiWrapper
         $this->debuglog('Getting user list');
 
         $url = '/obs/api/ListUsers.do';
-        $result = $this->__runQuery($url);
+        $result = $this->runQuery($url);
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
             throw new Exception("Problem during getUsers(). $result");
-        } else {
-            return simplexml_load_string($result);
         }
+        return simplexml_load_string($result);
     }
 
     // Get all backup sets for a particular user
@@ -110,14 +107,13 @@ class AhsayApiWrapper
         $this->debuglog("Getting backup sets for user '$username'");
 
         $url = "/obs/api/ListBackupSets.do?LoginName=$username";
-        $result = $this->__runQuery($url);
+        $result = $this->runQuery($url);
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
             throw new Exception("Problem during getUserBackupSets() for '$username'. $result");
-        } else {
-            return simplexml_load_string($result);
         }
+        return simplexml_load_string($result);
     }
 
     // Get storage statistics for a particular user
@@ -127,14 +123,13 @@ class AhsayApiWrapper
 
         $url = "/obs/api/GetUserStorageStat.do?LoginName=$username&YearMonth=$date";
         $this->debuglog($url);
-        $result = $this->__runQuery($url);
+        $result = $this->runQuery($url);
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
             throw new Exception("Problem during getUserStorageStats() for '$username'. $result");
-        } else {
-            return simplexml_load_string($result);
         }
+        return simplexml_load_string($result);
     }
 
     // Get all backup jobs for a particular user
@@ -143,14 +138,13 @@ class AhsayApiWrapper
         $this->debuglog("Getting backup jobs for user '$username'");
 
         $url = "/obs/api/ListBackupJobs.do?LoginName=$username";
-        $result = $this->__runQuery($url);
+        $result = $this->runQuery($url);
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
             throw new Exception("Problem during getUserBackupJobs() for '$username'. $result");
-        } else {
-            return simplexml_load_string($result);
         }
+        return simplexml_load_string($result);
     }
 
     // Get all backup jobs for a particular user, limited to a particular backup set
@@ -159,31 +153,30 @@ class AhsayApiWrapper
         $this->debuglog("Getting backup jobs for user '$username', for backup set with id '$backupset'");
 
         $url = "/obs/api/ListBackupJobs.do?LoginName=$username";
-        $result = $this->__runQuery($url);
+        $result = $this->runQuery($url);
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
             throw new Exception("Problem during getBackupJobsForSet() for '$username', for backup set with id '$backupset'. $result");
-        } else {
-            $data = simplexml_load_string($result);
-
-            foreach ($data->BackupSet as $set) {
-                // If this is the backupset we are interested in
-                if ($set['ID'] == $backupset) {
-                    $this->debuglog(sizeof($set)." job(s) found for set '$backupset'");
-
-                    return $set;
-                }
-            }
-            // If we get to here then that backup set obviously doesn't exist!
-            throw new Exception("Problem doing getBackupJobsForSet() - looks like set '$backupset' doesn't exist");
         }
+        $data = simplexml_load_string($result);
+
+        foreach ($data->BackupSet as $set) {
+            // If this is the backupset we are interested in
+            if ($set['ID'] == $backupset) {
+                $this->debuglog(sizeof($set)." job(s) found for set '$backupset'");
+
+                return $set;
+            }
+        }
+        // If we get to here then that backup set obviously doesn't exist!
+        throw new Exception("Problem doing getBackupJobsForSet() - looks like set '$backupset' doesn't exist");
     }
 
     // Get the IDs of each backup job for this set in reverse order
-    public function getBackupSetJobIds($username, $backupset, $rev = false)
+    public function getBackupSetJobIds($username, $backupset, $rev)
     {
-        $backup_sets = array();
+        $rev = false;
 
         $this->debuglog("Getting list of backup job ids for user '$username', for backup set with id '$backupset'");
 
@@ -191,22 +184,25 @@ class AhsayApiWrapper
         $jobs = $this->getBackupJobsForSet($username, $backupset);
 
         if (sizeof($jobs) <= 0) {
-            throw new Exception("Could not run getUserBackupJobsForSet() in getBackupSetJobIds() for backup set id '$backupset'. $result");
+            throw new Exception("Could not run getUserBackupJobsForSet() in getBackupSetJobIds() for backup set id '$backupset'.");
         }
 
         // Go through each job id
+        //         $backupSets = array();
+
         foreach ($jobs->BackupJob as $job) {
-            $backup_jobs[] = (string) $job['ID'];
+            $backupJobs[] = (string) $job['ID'];
         }
 
         // Sort in reverse?
-        if ($rev != false) {
-            rsort($backup_jobs);
-        } else {
-            sort($backup_jobs);
+        if ($rev) {
+            rsort($backupJobs);
+        }
+        if (!$rev) {
+            sort($backupJobs);
         }
 
-        return $backup_jobs;
+        return $backupJobs;
     }
 
     // Get the ID of the most recent job for this backup set
@@ -216,8 +212,8 @@ class AhsayApiWrapper
 
         // Get a list of all backup jobs for this backup set (in reverse order)
         $jobs = $this->getBackupSetJobIds($username, $backupset, true);
-        if ($jobs == false) {
-            throw new Exception("Could not run getBackupSetJobIds() in getMostRecentBackupJob() for backup set id '$backupset'. $result");
+        if (!$jobs) {
+            throw new Exception("Could not run getBackupSetJobIds() in getMostRecentBackupJob() for backup set id '$backupset'.");
         }
 
         // Return just the most recent
@@ -230,14 +226,13 @@ class AhsayApiWrapper
         $this->debuglog("Getting backup job details for user '$username', job id '$backupjob'");
 
         $url = "/obs/api/GetBackupJobReport.do?LoginName=$username&BackupSetID=$backupset&BackupJobID=$backupjob";
-        $result = $this->__runQuery($url);
+        $result = $this->runQuery($url);
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
             throw new Exception("Problem during getUserBackupJobDetails() for '$username', job id '$backupjob'. $result");
-        } else {
-            return simplexml_load_string($result);
         }
+        return simplexml_load_string($result);
     }
 
     // Get details on a particular backup set
@@ -246,26 +241,28 @@ class AhsayApiWrapper
         $this->debuglog("Getting details for backup set with id '$setid' for user '$username'");
 
         $url = "/obs/api/GetBackupSet.do?LoginName=$username&BackupSetID=$setid";
-        $result = $this->__runQuery($url);
+        $result = $this->runQuery($url);
 
         // If that didn't happen
         if (substr($result, 1, 3) == 'err') {
             throw new Exception("Problem during getUserBackupSet() for $username. $result");
-        } else {
-            return simplexml_load_string($result);
         }
+        return simplexml_load_string($result);
     }
 
     // Run an API query against OBS
-    public function __runQuery($url)
+    public function runQuery($url)
     {
         $url = $this->serverAddress.$url;
+
         // If this URL already has a query string
         if (strstr($url, '?')) {
             $url .= '&SysUser='.$this->serverAdminUsername.'&SysPwd='.$this->serverAdminPassword;
-        } else {
+        }
+        if (!strstr($url, '?')) {
             $url .= '?SysUser='.$this->serverAdminUsername.'&SysPwd='.$this->serverAdminPassword;
         }
+
         $this->debuglog("Trying $url");
         $result = file_get_contents($url);
 

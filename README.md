@@ -1,7 +1,7 @@
 # php-ahsay-api-wrapper
 [![GitHub license](https://img.shields.io/github/license/hannesbe/php-ahsay-api-wrapper.svg)](https://raw.githubusercontent.com/hannesbe/php-ahsay-api-wrapper/master/LICENSE)
 
-[![GitHub release](https://img.shields.io/github/release/hannesbe/php-ahsay-api-wrapper.svg)](https://github.com/hannesbe/php-ahsay-api-wrapper/releases) [![GitHub commits](https://img.shields.io/github/commits-since/hannesbe/php-ahsay-api-wrapper/1.1.svg)](https://github.com/hannesbe/php-ahsay-api-wrapper/commits/1.1)
+[![GitHub release](https://img.shields.io/github/release/hannesbe/php-ahsay-api-wrapper.svg)](https://github.com/hannesbe/php-ahsay-api-wrapper/releases) [![GitHub commits](https://img.shields.io/github/commits-since/hannesbe/php-ahsay-api-wrapper/1.1.1.svg)](https://github.com/hannesbe/php-ahsay-api-wrapper/commits/1.1)
 
 PHP API wrapper for AhsayOBS
 
@@ -34,6 +34,6 @@ printf('EndTime: '.$lastJobDetailArray['EndTime']);
 Some API calls are known to be missing.  You are welcome to write the code for these functions yourself and submit the necessary code to me for inclusion in future releases of this library.
 
 ## License
-[![GitHub license](https://img.shields.io/github/license/hannesbe/check_ahsay_backupset.svg)](https://raw.githubusercontent.com/hannesbe/php-ahsay-api-wrapper/master/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/hannesbe/php-ahsay-api-wrapper.svg)](https://raw.githubusercontent.com/hannesbe/php-ahsay-api-wrapper/master/LICENSE)
 
 See the [LICENSE](LICENSE) file for more details.

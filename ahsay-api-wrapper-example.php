@@ -10,6 +10,8 @@ $api = new AhsayApiWrapper(BACKUPSERVER_ADDRESS, BACKUPSERVER_ADMINUSER, BACKUPS
 
 $api->debug(true);
 
+$api2 = new AhsayApiWrapper();
+
 $user = 'user01'; // Ahsay username
 $backupSet = '1317401234567'; // Ahsay numeric backupset ID
 
