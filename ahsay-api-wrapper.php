@@ -23,7 +23,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 */
-class AsayApiWrapper
+class AhsayApiWrapper
 {
     public $serverAddress;
     public $serverAdminUsername;
@@ -253,20 +253,26 @@ class AsayApiWrapper
     // Run an API query against OBS
     public function runQuery($url)
     {
-        $url = $this->serverAddress.$url;
+        try {
+            $url = $this->serverAddress.$url;
 
-        // If this URL already has a query string
-        if (strstr($url, '?')) {
-            $url .= '&SysUser='.$this->serverAdminUsername.'&SysPwd='.$this->serverAdminPassword;
+            // If this URL already has a query string
+            if (strstr($url, '?')) {
+                $url .= '&SysUser='.$this->serverAdminUsername.'&SysPwd='.$this->serverAdminPassword;
+            }
+            if (!strstr($url, '?')) {
+                $url .= '?SysUser='.$this->serverAdminUsername.'&SysPwd='.$this->serverAdminPassword;
+            }
+
+            $this->debuglog("Trying $url");
+            $result = file_get_contents($url);
+            if ($result === false) {
+                throw new Exception("Error accessing API");
+            }
+            return $result;
+        } catch (Exception $e) {
+            throw new Exception("Error accessing API: ".$e->GetMessage());
         }
-        if (!strstr($url, '?')) {
-            $url .= '?SysUser='.$this->serverAdminUsername.'&SysPwd='.$this->serverAdminPassword;
-        }
-
-        $this->debuglog("Trying $url");
-        $result = file_get_contents($url);
-
-        return $result;
     }
 
     public function formatBytes($bytes, $precision = 2)
