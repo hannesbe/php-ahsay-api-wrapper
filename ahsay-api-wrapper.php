@@ -28,6 +28,7 @@ class AhsayApiWrapper
   public $serverAddress;
   public $serverAdminUsername;
   public $serverAdminPassword;
+  public $serverVersion;
   public $debug;
   public $error;
 
