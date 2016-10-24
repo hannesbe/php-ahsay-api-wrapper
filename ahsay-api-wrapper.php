@@ -264,7 +264,7 @@ class AhsayApiWrapper
   public function listBackupJobStatus($username, $date)
   {
     if (isset($date) === false) {
-      $date = date("-Y-m-d");
+      $date = date("Y-m-d");
     }
 
     $this->debuglog("Getting status for backup job that run on the '$date' for user '$username'");
