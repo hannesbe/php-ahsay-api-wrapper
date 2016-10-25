@@ -56,6 +56,20 @@ class AhsayApiWrapper
     $this->debug = $which;
   }
 
+  // Get Ahsay OBS License informations
+  public function getLicense()
+  {
+    $this->debugLog("Get Ahsay OBS license informations");
+
+    $url = "/GetLicense.do";
+    $result = $this->runQuery($url);
+
+    // If that didn't happen
+    $this->errorHandler($result, "Failed to get Ahsay OBS License informations.");
+
+    return $this->decodeResult($result);
+  }
+
   // Authenticate a user against OBS
   public function authenticateUser($username, $password)
   {
@@ -314,7 +328,7 @@ class AhsayApiWrapper
   public function runQuery($url)
   {
     try {
-      if ($this->serverVersion == '6') {
+      if ($this->serverVersion === '6') {
         $url = $this->serverAddress.'/obs/api'.$url;
 
         // If this URL already has a query string
@@ -327,7 +341,7 @@ class AhsayApiWrapper
         $this->debuglog("Trying $url");
         $result = file_get_contents($url);
 
-      } elseif ($this->serverVersion == '7') {
+      } elseif ($this->serverVersion === '7') {
         if (strstr($url, '?')) {
           $args=explode('&', substr($url, strpos($url, '?') +1));
           $url = $this->serverAddress.'/obs/api/json'.strstr($url, '?', TRUE);
@@ -375,9 +389,9 @@ class AhsayApiWrapper
   public function decodeResult($result)
   {
     try {
-      if ($this->serverVersion == '6') {
+      if ($this->serverVersion === '6') {
         return simplexml_load_string($result);
-      } elseif ($this->serverVersion == '7') {
+      } elseif ($this->serverVersion === '7') {
         return json_decode($result);
       } else {
         throw new Exception("Please specify server version between 6 or 7 !\e\n");
@@ -392,13 +406,13 @@ class AhsayApiWrapper
   public function errorHandler($result, $message)
   {
     try {
-      if ($this->serverVersion == '6') {
-        if (substr($result, 1, 3) == 'err') {
+      if ($this->serverVersion === '6') {
+        if (substr($result, 1, 3) === 'err') {
           throw new Exception($message . "\r\n" . $result . "\r\n");
         }
-      } elseif ($this->serverVersion == '7') {
+      } elseif ($this->serverVersion === '7') {
         $status=json_decode($result, TRUE);
-        if ($status['Status'] == 'Error') {
+        if ($status['Status'] === 'Error') {
           throw new Exception($message . "\r\n" . $result . "\r\n");
         }
       } else {
