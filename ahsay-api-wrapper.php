@@ -238,10 +238,12 @@ class AhsayApiWrapper
   }
 
   // Get all backup jobs for a particular user
-  public function getUserBackupJobDetails($username, $backupset, $backupjob)
+  public function getUserBackupJobDetails($username, $backupset, $backupjob, $summary)
   {
 
-    $this->debuglog("Getting backup job details for user '$username', job id '$backupjob'");
+    if(isset($summary) === false) {
+      $summary = false;
+    }
 
     $destinationid = $this->getDestinationID($username, $backupset, $backupjob);
 
@@ -251,7 +253,11 @@ class AhsayApiWrapper
 
     $this->debuglog("Getting backup job details for user '$username', job id '$backupjob'");
 
-    $url = "/GetBackupJobReport.do?LoginName=$username&BackupSetID=$backupset&BackupJobID=$backupjob&DestinationID=$destinationid";
+    if($summary === false) {
+      $url = "/GetBackupJobReport.do?LoginName=$username&BackupSetID=$backupset&BackupJobID=$backupjob&DestinationID=$destinationid";
+    } else {
+      $url = "/GetBackupJobReportSummary.do?LoginName=$username&BackupSetID=$backupset&BackupJobID=$backupjob&DestinationID=$destinationid";
+    }
     $result = $this->runQuery($url);
 
     // If that didn't happen
@@ -285,6 +291,12 @@ class AhsayApiWrapper
 
     $url = "/ListBackupJobStatus.do?LoginName=$username&BackupDate=$date";
     $result = $this->runQuery($url);
+
+    if(json_decode($result)->Status == 'Error') {
+    if(json_decode($result)->Message == '[Error] No Backup Job on that day') {
+      return 'No Backup Job on that day';
+    }
+  }
 
     // If that didn't happen
     $this->errorHandler($result, "Problem during listBackupJobStatus() for $username. $result");
